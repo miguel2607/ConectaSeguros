@@ -7,8 +7,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        'conecta-orange': '#fac893',
-        'conecta-orange-dark': '#e8922e',
+        'conecta-orange': '#FDB03D',
+        'conecta-orange-dark': '#e09a2a',
         'conecta-blue': '#1A2B4C',
         'conecta-blue-light': '#2A3B5C',
       },

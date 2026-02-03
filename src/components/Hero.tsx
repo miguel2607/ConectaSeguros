@@ -40,7 +40,7 @@ const Hero = () => {
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2, duration: 0.8 }}
-              className="text-4xl md:text-5xl lg:text-6xl text-conecta-blue leading-tight"
+              className="text-[4.75rem] text-conecta-blue leading-tight"
             >
               HACIENDO
             </motion.h1>
@@ -48,7 +48,7 @@ const Hero = () => {
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-4xl md:text-5xl lg:text-6xl text-conecta-blue leading-tight"
+              className="text-[4.75rem] text-conecta-blue leading-tight"
             >
               CONEXIONES
             </motion.h1>
@@ -68,10 +68,10 @@ const Hero = () => {
             transition={{ delay: 0.8, duration: 0.8 }}
             className="space-y-4"
           >
-            <h2 className="text-4xl md:text-5xl lg:text-6xl text-white leading-tight text-shadow-lg">
+            <h2 className="text-[4.75rem] text-white leading-tight text-shadow-lg">
               GENERANDO
             </h2>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl text-white leading-tight text-shadow-lg">
+            <h2 className="text-[4.75rem] text-white leading-tight text-shadow-lg">
               TRANQUILIDAD
             </h2>
           </motion.div>

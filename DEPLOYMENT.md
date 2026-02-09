@@ -50,8 +50,12 @@ El proyecto usa **PostgreSQL**. En Render puedes crear una base de datos Postgre
 
 1. En Render: **New → PostgreSQL**.
 2. Crea la base (ej. `conecta_db`) y anota las variables que Render te da (o la **Internal Database URL**).
-3. La URL en formato JDBC debe ser: `jdbc:postgresql://HOST:PORT/DATABASE` (Render suele dar una URL tipo `postgres://...`; para JDBC usa `jdbc:postgresql://...` con el mismo host, puerto y nombre de base).
-4. Variables que necesitarás: **SPRING_DATASOURCE_URL** (ej. `jdbc:postgresql://dpg-xxx.oregon-postgres.render.com/conecta_db`), **DB_USERNAME**, **DB_PASSWORD**.
+3. **Importante:** Render da una URL tipo `postgresql://usuario:contraseña@host:5432/base`. En el backend debes usar **tres variables por separado**; **no** pegues usuario ni contraseña dentro de la URL.
+   - **SPRING_DATASOURCE_URL** = solo: `jdbc:postgresql://HOST:5432/NOMBRE_BASE`  
+     Sin `usuario:contraseña@`. HOST debe ser el host completo (ej. `dpg-d6502k6r433s73egukn0-a.oregon-postgres.render.com`). Si en Render solo ves `dpg-xxxxx-a`, añade `.oregon-postgres.render.com`. Puerto `:5432` obligatorio.
+   - **DB_USERNAME** = el usuario (ej. `conecta_db_ter6_user`).
+   - **DB_PASSWORD** = la contraseña (la que va después de `usuario:` en la Internal URL).
+   - Ejemplo correcto: **SPRING_DATASOURCE_URL** = `jdbc:postgresql://dpg-d6502k6r433s73egukn0-a.oregon-postgres.render.com:5432/conecta_db_ter6`, **DB_USERNAME** = `conecta_db_ter6_user`, **DB_PASSWORD** = (tu contraseña). **Incorrecto:** poner `jdbc:postgresql://usuario:password@host/base` en SPRING_DATASOURCE_URL.
 
 Si usas otro proveedor (Railway, Aiven, etc.), crea una base PostgreSQL y anota URL, usuario y contraseña.
 
@@ -107,7 +111,7 @@ Tienes dos opciones: **Docker** (recomendado) o **Native (Java)**.
    | `DB_USERNAME` | usuario de la BD |
    | `DB_PASSWORD` | contraseña de la BD |
    | `JWT_SECRET` | una cadena larga y aleatoria (ej. generada con un generador de contraseñas) |
-   | `CORS_ORIGINS` | URL del frontend en Render, ej. `https://conecta-frontend.onrender.com` |
+   | `CORS_ORIGINS` | Origen exacto del frontend, ej. `https://conectaseguros.onrender.com` (sin `/` al final; sin esto el login desde el admin dará error CORS) |
 
 5. Crear Web Service. Cuando termine el deploy, anota la URL del backend (ej. `https://conecta-backend.onrender.com`). La API quedará en `https://conecta-backend.onrender.com/api`.
 
@@ -136,7 +140,15 @@ Tienes dos opciones: **Docker** (recomendado) o **Native (Java)**.
 
 5. Crear Static Site. Cuando termine, tendrás la URL del sitio (ej. `https://conecta-frontend.onrender.com`).
 
-6. **CORS:** En el backend de Render, la variable `CORS_ORIGINS` debe incluir exactamente la URL del frontend (ej. `https://conecta-frontend.onrender.com`). Si ya la definiste en el paso 3, no hace falta cambiar nada; si cambias la URL del frontend, actualiza `CORS_ORIGINS` en el backend.
+6. **Redirects/Rewrites (obligatorio para ver el panel Admin):** Si al ir a `/admin` solo ves "Not Found" o la URL sin contenido, falta esta regla:
+   - En [Render Dashboard](https://dashboard.render.com) → tu **Static Site** (ej. conectaseguros) → pestaña **Redirects/Rewrites**.
+   - Pulsa **Add Rule** y configura:
+     - **Source:** `/*`
+     - **Destination:** `/index.html`
+     - **Action:** **Rewrite** (no Redirect)
+   - Guarda. Con esto, todas las rutas (`/admin`, `/blog`, etc.) sirven `index.html` y React Router muestra el panel correcto.
+
+7. **CORS:** En el backend de Render, la variable `CORS_ORIGINS` debe incluir exactamente la URL del frontend (ej. `https://conecta-frontend.onrender.com`). Si ya la definiste en el paso 3, no hace falta cambiar nada; si cambias la URL del frontend, actualiza `CORS_ORIGINS` en el backend.
 
 ---
 
@@ -148,7 +160,7 @@ Tienes dos opciones: **Docker** (recomendado) o **Native (Java)**.
 - **Backend (producción):** `https://conecta-backend.onrender.com`  
   Variables: `SPRING_DATASOURCE_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`, `CORS_ORIGINS`
 
-- **Admin:** Entra a `https://conecta-frontend.onrender.com/admin` y usa el usuario creado con `init-admin.sql` en la base de datos de producción.
+- **Admin:** Entra a `https://conecta-frontend.onrender.com/admin` y usa el usuario creado con `init-admin.sql` en la base de datos de producción. (Para que `/admin` no dé "Not Found", debe estar configurada la Rewrite `/*` → `/index.html` en Redirects/Rewrites del Static Site; ver paso 6 anterior.)
 
 ---
 

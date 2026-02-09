@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { api } from '../../config/api'
 
 interface PricingData {
   empleado: {
@@ -90,39 +91,88 @@ const AdminPricing = () => {
 
   const [saved, setSaved] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
-    const saved = localStorage.getItem('judicial_pricing')
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved)
-        // Merge con valores por defecto para asegurar que todos los campos existan
-        setPricing({
-          ...pricing,
-          ...parsed,
-          coberturas: {
-            ...pricing.coberturas,
-            ...parsed.coberturas,
-          },
-        })
-      } catch (e) {
-        console.error('Error loading pricing data:', e)
-      }
-    }
+    loadPricing()
   }, [])
+
+  const loadPricing = async () => {
+    try {
+      setIsLoading(true)
+      const data = await api.getPricing()
+      console.log('Datos recibidos del backend:', data)
+      if (data) {
+        // Asegurarse de que todos los campos estén presentes
+        const updatedPricing: PricingData = {
+          empleado: data.empleado || pricing.empleado,
+          conyuge: data.conyuge || pricing.conyuge,
+          progenitores: data.progenitores || pricing.progenitores,
+          coberturas: {
+            vida: data.coberturas?.vida || pricing.coberturas.vida,
+            invalidez: data.coberturas?.invalidez || pricing.coberturas.invalidez,
+            enfermedadesGraves: data.coberturas?.enfermedadesGraves || pricing.coberturas.enfermedadesGraves,
+            auxilioFunerario: data.coberturas?.auxilioFunerario || pricing.coberturas.auxilioFunerario,
+            bonoCanasta: data.coberturas?.bonoCanasta || pricing.coberturas.bonoCanasta,
+            auxilioMaternidad: data.coberturas?.auxilioMaternidad || pricing.coberturas.auxilioMaternidad,
+            muerteAccidental: data.coberturas?.muerteAccidental || pricing.coberturas.muerteAccidental,
+            invalidezDesmembracion: data.coberturas?.invalidezDesmembracion || pricing.coberturas.invalidezDesmembracion,
+          },
+          otros: data.otros || pricing.otros,
+        }
+        setPricing(updatedPricing)
+      }
+    } catch (error: any) {
+      console.error('Error loading pricing data:', error)
+      // Si hay error, mantener valores por defecto
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleChange = () => {
     setHasChanges(true)
     setSaved(false)
   }
 
-  const handleSave = () => {
-    localStorage.setItem('judicial_pricing', JSON.stringify(pricing))
-    setSaved(true)
-    setHasChanges(false)
-    setTimeout(() => setSaved(false), 3000)
-    // Recargar la página para ver los cambios
-    window.location.reload()
+  const handleSave = async () => {
+    // Verificar autenticación antes de guardar
+    if (!api.isAuthenticated()) {
+      alert('No estás autenticado. Por favor, inicia sesión nuevamente.')
+      return
+    }
+
+    try {
+      setIsSaving(true)
+      console.log('Enviando pricing:', JSON.stringify(pricing, null, 2))
+      const result = await api.updatePricing(pricing)
+      console.log('Pricing guardado exitosamente:', result)
+      setSaved(true)
+      setHasChanges(false)
+      // Recargar los datos actualizados desde el servidor
+      await loadPricing()
+      setTimeout(() => setSaved(false), 3000)
+    } catch (error: any) {
+      console.error('Error saving pricing:', error)
+      let errorMessage = 'Error desconocido al guardar los precios'
+      
+      if (error?.message) {
+        errorMessage = error.message
+      } else if (typeof error === 'string') {
+        errorMessage = error
+      }
+      
+      // Verificar si es un error de autenticación
+      if (errorMessage.includes('401') || errorMessage.includes('Sesión expirada') || errorMessage.includes('Unauthorized')) {
+        alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.')
+        window.location.href = '/admin'
+      } else {
+        alert(`Error al guardar los precios: ${errorMessage}\n\nPor favor, verifica que estés autenticado y que el backend esté funcionando.`)
+      }
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const updateCobertura = (key: keyof typeof pricing.coberturas, plan: string, value: string) => {
@@ -202,19 +252,27 @@ const AdminPricing = () => {
             <p className="text-white/80">Administra todos los precios de la Rama Judicial - SURA</p>
           </div>
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: isLoading || isSaving ? 1 : 1.05 }}
+            whileTap={{ scale: isLoading || isSaving ? 1 : 0.95 }}
             onClick={handleSave}
-            disabled={!hasChanges}
+            disabled={!hasChanges || isLoading || isSaving}
             className={`px-8 py-4 rounded-xl font-bold text-lg shadow-xl transition-all duration-300 flex items-center space-x-2 ${
               saved
                 ? 'bg-green-500 hover:bg-green-600'
-                : hasChanges
+                : hasChanges && !isSaving
                 ? 'bg-conecta-orange hover:bg-conecta-orange-dark'
                 : 'bg-gray-400 cursor-not-allowed'
             }`}
           >
-            {saved ? (
+            {isSaving ? (
+              <>
+                <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Guardando...</span>
+              </>
+            ) : saved ? (
               <>
                 <span>✓</span>
                 <span>Guardado</span>

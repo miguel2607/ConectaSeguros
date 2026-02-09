@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { api } from '../config/api'
 
 interface PricingData {
   empleado: {
@@ -90,20 +91,24 @@ const JudicialSura = () => {
   })
 
   useEffect(() => {
-    const saved = localStorage.getItem('judicial_pricing')
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved)
+    loadPricing()
+  }, [])
+
+  const loadPricing = async () => {
+    try {
+      const data = await api.getPricing()
+      if (data) {
         setPricing({
           ...pricing,
-          ...parsed,
-          coberturas: parsed.coberturas || pricing.coberturas,
+          ...data,
+          coberturas: data.coberturas || pricing.coberturas,
         })
-      } catch (e) {
-        console.error('Error loading pricing data:', e)
       }
+    } catch (e) {
+      console.error('Error loading pricing data:', e)
+      // Si hay error, mantener valores por defecto
     }
-  }, [])
+  }
 
   return (
     <section
@@ -250,7 +255,7 @@ const JudicialSura = () => {
                       <td className="px-3 py-3 text-center font-number">{pricing.coberturas?.invalidez.planG || '20M'}</td>
                     </tr>
                     <tr className="border-b">
-                      <td className="px-4 py-3">Enfermedades Graves <span className="font-number">50%</span> de anticipo</td>
+                      <td className="px-4 py-3">Enfermedades Graves <span className="font-number">50</span>% de anticipo</td>
                       <td className="px-3 py-3 text-center font-number">{pricing.coberturas?.enfermedadesGraves.planA || '125M'}</td>
                       <td className="px-3 py-3 text-center font-number">{pricing.coberturas?.enfermedadesGraves.planB || '100M'}</td>
                       <td className="px-3 py-3 text-center font-number">{pricing.coberturas?.enfermedadesGraves.planC || '50M'}</td>

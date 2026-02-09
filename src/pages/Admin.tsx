@@ -5,20 +5,20 @@ import AdminPricing from '../components/admin/AdminPricing'
 import AdminBlogs from '../components/admin/AdminBlogs'
 import AdminServices from '../components/admin/AdminServices'
 import Toast from '../components/admin/Toast'
+import { api } from '../config/api'
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const [activeTab, setActiveTab] = useState<'pricing' | 'blogs' | 'services'>('pricing')
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null)
   const navigate = useNavigate()
 
-  // Contraseña simple para acceso (en producción usar autenticación real)
-  const ADMIN_PASSWORD = 'admin123'
-
   useEffect(() => {
-    const auth = localStorage.getItem('admin_authenticated')
-    if (auth === 'true') {
+    // Verificar si ya hay una sesión activa
+    if (api.isAuthenticated()) {
       setIsAuthenticated(true)
     }
   }, [])
@@ -28,28 +28,34 @@ const Admin = () => {
     setTimeout(() => setToast(null), 4000)
   }
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (password === ADMIN_PASSWORD) {
+    setIsLoading(true)
+    
+    try {
+      const response = await api.login(username || 'admin', password)
       setIsAuthenticated(true)
-      localStorage.setItem('admin_authenticated', 'true')
-      showToast('¡Bienvenido al panel de administración!', 'success')
-    } else {
-      showToast('Contraseña incorrecta', 'error')
+      showToast(`¡Bienvenido ${response.username || 'admin'}!`, 'success')
       setPassword('')
+    } catch (error: any) {
+      showToast(error.message || 'Credenciales inválidas', 'error')
+      setPassword('')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const handleLogout = () => {
+    api.logout()
     setIsAuthenticated(false)
-    localStorage.removeItem('admin_authenticated')
+    setUsername('')
     setPassword('')
     showToast('Sesión cerrada correctamente', 'info')
   }
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-conecta-blue via-blue-900 to-conecta-blue flex items-center justify-center py-12 px-4 relative overflow-hidden">
+      <div className="font-system min-h-screen bg-gradient-to-br from-conecta-blue via-blue-900 to-conecta-blue flex items-center justify-center py-12 px-4 relative overflow-hidden">
         {/* Background Animation */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-0 left-0 w-96 h-96 bg-conecta-orange/20 rounded-full blur-3xl animate-pulse"></div>
@@ -75,6 +81,21 @@ const Admin = () => {
           </div>
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
+              <label htmlFor="username" className="block text-sm font-semibold text-gray-700 mb-2">
+                Usuario
+              </label>
+              <input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-conecta-orange focus:border-conecta-orange outline-none transition-all duration-300 text-lg"
+                placeholder="admin"
+                required
+                autoFocus
+              />
+            </div>
+            <div>
               <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
                 Contraseña
               </label>
@@ -86,16 +107,18 @@ const Admin = () => {
                 className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-conecta-orange focus:border-conecta-orange outline-none transition-all duration-300 text-lg"
                 placeholder="Ingresa la contraseña"
                 required
-                autoFocus
               />
             </div>
             <motion.button
               type="submit"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full px-8 py-4 bg-gradient-to-r from-conecta-orange to-conecta-orange-dark text-white font-bold rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg text-lg"
+              disabled={isLoading}
+              whileHover={{ scale: isLoading ? 1 : 1.02 }}
+              whileTap={{ scale: isLoading ? 1 : 0.98 }}
+              className={`w-full px-8 py-4 bg-gradient-to-r from-conecta-orange to-conecta-orange-dark text-white font-bold rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg text-lg ${
+                isLoading ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
             >
-              Ingresar
+              {isLoading ? 'Iniciando sesión...' : 'Ingresar'}
             </motion.button>
           </form>
         </motion.div>
@@ -112,7 +135,7 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="font-system min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
       <motion.header
         initial={{ y: -100 }}

@@ -9,7 +9,7 @@ export default {
       colors: {
         'conecta-orange': '#FDB03D',
         'conecta-orange-dark': '#e09a2a',
-        'conecta-blue': '#1A2B4C',
+        'conecta-blue': '#1a2b4c',
         'conecta-blue-light': '#2A3B5C',
       },
       fontFamily: {

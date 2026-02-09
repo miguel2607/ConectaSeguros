@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { api } from '../../config/api'
+import { resizeImageFile } from '../../utils/imageResize'
+import { isIconImage, resolveIconSrc } from '../../utils/serviceIcon'
 
 interface Service {
   id: string
@@ -8,6 +11,9 @@ interface Service {
   slug: string
   icon: string
   priceFrom?: string
+  includes?: string
+  howItWorks?: string
+  idealFor?: string
 }
 
 const AdminServices = () => {
@@ -20,62 +26,31 @@ const AdminServices = () => {
     slug: '',
     icon: '🛡️',
     priceFrom: '',
+    includes: '',
+    howItWorks: '',
+    idealFor: '',
   })
   const [showForm, setShowForm] = useState(false)
 
   useEffect(() => {
-    const saved = localStorage.getItem('services_list')
-    if (saved) {
-      setServices(JSON.parse(saved))
-    } else {
-      const defaultServices: Service[] = [
-        {
-          id: '1',
-          title: 'Seguros de Hogar',
-          description: 'Protección completa para tu vivienda y bienes personales.',
-          slug: 'seguro-hogar',
-          icon: '🏠',
-        },
-        {
-          id: '2',
-          title: 'Seguros de Vida',
-          description: 'Tranquilidad para ti y tu familia con coberturas flexibles.',
-          slug: 'seguro-vida',
-          icon: '🛡️',
-        },
-        {
-          id: '3',
-          title: 'Seguros Vehiculares',
-          description: 'Cobertura integral para tu automóvil, moto o flota.',
-          slug: 'seguro-vehicular',
-          icon: '🚗',
-        },
-        {
-          id: '4',
-          title: 'Seguros Empresariales',
-          description: 'Protección completa para tu negocio y empleados.',
-          slug: 'seguro-empresarial',
-          icon: '🏢',
-        },
-        {
-          id: '5',
-          title: 'Seguros de Salud',
-          description: 'Atención médica de calidad cuando más la necesitas.',
-          slug: 'seguro-salud',
-          icon: '💊',
-        },
-        {
-          id: '6',
-          title: 'Asesoría Personalizada',
-          description: 'Expertos que te ayudan a elegir la mejor opción.',
-          slug: 'asesoria-personalizada',
-          icon: '🤝',
-        },
-      ]
-      setServices(defaultServices)
-      localStorage.setItem('services_list', JSON.stringify(defaultServices))
-    }
+    loadServices()
   }, [])
+
+  const loadServices = async () => {
+    try {
+      const data = await api.getServices()
+      if (data && Array.isArray(data)) {
+        // Convertir IDs numéricos a strings para compatibilidad
+        const servicesWithStringIds = data.map(service => ({
+          ...service,
+          id: service.id?.toString() || String(service.id)
+        }))
+        setServices(servicesWithStringIds)
+      }
+    } catch (error) {
+      console.error('Error loading services:', error)
+    }
+  }
 
   const generateSlug = (title: string) => {
     return title
@@ -86,35 +61,62 @@ const AdminServices = () => {
       .replace(/(^-|-$)/g, '')
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!formData.title || !formData.description) {
       return
     }
 
-    const slug = formData.slug || generateSlug(formData.title)
-    const newService: Service = { ...formData, slug }
+    try {
+      const slug = formData.slug || generateSlug(formData.title)
+      
+      if (editingId) {
+        // Actualizar servicio existente
+        const serviceId = parseInt(editingId)
+        await api.updateService(serviceId, {
+          title: formData.title,
+          description: formData.description,
+          icon: formData.icon,
+          priceFrom: formData.priceFrom,
+          includes: formData.includes,
+          howItWorks: formData.howItWorks,
+          idealFor: formData.idealFor,
+          slug: slug,
+        })
+        // Recargar lista
+        await loadServices()
+      } else {
+        // Crear nuevo servicio
+        await api.createService({
+          title: formData.title,
+          description: formData.description,
+          icon: formData.icon,
+          priceFrom: formData.priceFrom,
+          includes: formData.includes,
+          howItWorks: formData.howItWorks,
+          idealFor: formData.idealFor,
+          slug: slug,
+        })
+        // Recargar lista
+        await loadServices()
+      }
 
-    if (editingId) {
-      const updated = services.map((s) => (s.id === editingId ? newService : s))
-      setServices(updated)
-      localStorage.setItem('services_list', JSON.stringify(updated))
-    } else {
-      const newId = Date.now().toString()
-      const updated = [...services, { ...newService, id: newId }]
-      setServices(updated)
-      localStorage.setItem('services_list', JSON.stringify(updated))
+      setFormData({
+        id: '',
+        title: '',
+        description: '',
+        slug: '',
+        icon: '🛡️',
+        priceFrom: '',
+        includes: '',
+        howItWorks: '',
+        idealFor: '',
+      })
+      setEditingId(null)
+      setShowForm(false)
+    } catch (error) {
+      console.error('Error saving service:', error)
+      alert('Error al guardar el servicio. Por favor, intenta nuevamente.')
     }
-
-    setFormData({
-      id: '',
-      title: '',
-      description: '',
-      slug: '',
-      icon: '🛡️',
-      priceFrom: '',
-    })
-    setEditingId(null)
-    setShowForm(false)
   }
 
   const handleEdit = (service: Service) => {
@@ -123,11 +125,17 @@ const AdminServices = () => {
     setShowForm(true)
   }
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('¿Estás seguro de eliminar este servicio?')) {
-      const updated = services.filter((s) => s.id !== id)
-      setServices(updated)
-      localStorage.setItem('services_list', JSON.stringify(updated))
+      try {
+        const serviceId = parseInt(id)
+        await api.deleteService(serviceId)
+        // Recargar lista
+        await loadServices()
+      } catch (error) {
+        console.error('Error deleting service:', error)
+        alert('Error al eliminar el servicio. Por favor, intenta nuevamente.')
+      }
     }
   }
 
@@ -139,6 +147,9 @@ const AdminServices = () => {
       slug: '',
       icon: '🛡️',
       priceFrom: '',
+      includes: '',
+      howItWorks: '',
+      idealFor: '',
     })
     setEditingId(null)
     setShowForm(false)
@@ -210,14 +221,51 @@ const AdminServices = () => {
               </div>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Emoji/Icono</label>
-                  <input
-                    type="text"
-                    value={formData.icon}
-                    onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                    className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-300 text-2xl text-center"
-                    placeholder="🛡️"
-                  />
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Icono (emoji o imagen)</label>
+                  <p className="text-xs text-gray-500 mb-2">Emoji en el cuadro de texto o sube una imagen PNG/JPG (se guarda en la base de datos).</p>
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      value={isIconImage(formData.icon) ? '' : formData.icon}
+                      onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-lg"
+                      placeholder="Emoji ej. 🛡️"
+                    />
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <label className="cursor-pointer px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm font-medium text-gray-700 border border-gray-300">
+                        Subir imagen (PNG o JPG)
+                        <input
+                          type="file"
+                          accept=".png,.jpg,.jpeg"
+                          className="sr-only"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0]
+                            if (!file) return
+                            try {
+                              const dataUrl = await resizeImageFile(file)
+                              setFormData((prev) => ({ ...prev, icon: dataUrl }))
+                            } catch (err) {
+                              console.error('Error procesando imagen:', err)
+                              alert('No se pudo procesar la imagen. Usa un PNG o JPG menor a 10 MB.')
+                            }
+                            e.target.value = ''
+                          }}
+                        />
+                      </label>
+                      {isIconImage(formData.icon) && (
+                        <div className="flex items-center gap-2">
+                          <img src={resolveIconSrc(formData.icon)} alt="Vista previa" className="w-10 h-10 object-contain rounded border border-gray-200" />
+                          <button
+                            type="button"
+                            onClick={() => setFormData((prev) => ({ ...prev, icon: '🛡️' }))}
+                            className="text-xs text-red-600 hover:underline"
+                          >
+                            Quitar imagen
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Precio Desde (opcional)</label>
@@ -229,6 +277,39 @@ const AdminServices = () => {
                     placeholder="$50.000 COP"
                   />
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">¿Qué incluye este servicio? (opcional)</label>
+                <p className="text-xs text-gray-500 mb-2">Cada línea será un punto de la lista. Separa cada punto en una nueva línea.</p>
+                <textarea
+                  value={formData.includes || ''}
+                  onChange={(e) => setFormData({ ...formData, includes: e.target.value })}
+                  className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-300 resize-none"
+                  rows={4}
+                  placeholder="Protección financiera para tus seres queridos&#10;Cobertura en caso de muerte o invalidez&#10;Ayuda para cubrir gastos importantes"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">¿Cómo funciona? (opcional)</label>
+                <p className="text-xs text-gray-500 mb-2">Cada línea será un paso del proceso. Separa cada paso en una nueva línea.</p>
+                <textarea
+                  value={formData.howItWorks || ''}
+                  onChange={(e) => setFormData({ ...formData, howItWorks: e.target.value })}
+                  className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-300 resize-none"
+                  rows={4}
+                  placeholder="Contacta con nosotros para una cotización personalizada&#10;Te presentamos diferentes opciones adaptadas a tus necesidades&#10;Elige el plan que mejor se adapte a tu presupuesto&#10;Disfruta de la tranquilidad de estar protegido"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">¿Para quién es ideal este servicio? (opcional)</label>
+                <p className="text-xs text-gray-500 mb-2">Descripción de para quién está dirigido este servicio.</p>
+                <textarea
+                  value={formData.idealFor || ''}
+                  onChange={(e) => setFormData({ ...formData, idealFor: e.target.value })}
+                  className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-300 resize-none"
+                  rows={3}
+                  placeholder="Ideal para personas que buscan proteger a sus seres queridos y asegurar su futuro financiero..."
+                />
               </div>
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">Slug (URL)</label>
@@ -272,7 +353,7 @@ const AdminServices = () => {
       <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
         <h3 className="text-2xl text-conecta-blue mb-6 flex items-center space-x-2">
           <span>📋</span>
-          <span>Servicios Existentes ({services.length})</span>
+          <span>Servicios Existentes (<span className="font-number">{services.length}</span>)</span>
         </h3>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <AnimatePresence>
@@ -288,7 +369,13 @@ const AdminServices = () => {
               >
                 <div className="flex flex-col h-full">
                   <div className="flex items-start justify-between mb-4">
-                    <div className="text-5xl bg-green-50 rounded-xl p-3">{service.icon}</div>
+                    <div className="w-14 h-14 bg-green-50 rounded-xl p-3 flex items-center justify-center overflow-hidden">
+                      {isIconImage(service.icon) ? (
+                        <img src={resolveIconSrc(service.icon)} alt={service.title} className="w-full h-full object-contain" />
+                      ) : (
+                        <span className="text-5xl">{service.icon}</span>
+                      )}
+                    </div>
                     <div className="flex gap-2">
                       <motion.button
                         whileHover={{ scale: 1.1 }}

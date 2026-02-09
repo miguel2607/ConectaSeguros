@@ -82,8 +82,10 @@ conectaseguros/
 
 ## 🌐 Despliegue
 
-Puedes desplegar esta página en cualquier servicio de hosting estático:
+- **Docker (probar en local):** Backend + PostgreSQL con `docker-compose up --build`. Ver **[DOCKER.md](./DOCKER.md)**.
+- **GitHub + Render:** Para subir a GitHub y desplegar frontend y backend en Render (con Docker o Java nativo), sigue **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
 
+Para solo el frontend estático:
 - **Vercel**: `vercel --prod`
 - **Netlify**: Arrastra la carpeta `dist` a Netlify
 - **GitHub Pages**: Configura el build y deploy automático

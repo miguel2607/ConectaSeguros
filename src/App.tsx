@@ -37,7 +37,7 @@ function App() {
   return (
     <div className="min-h-screen bg-white">
       <Header isScrolled={isScrolled} />
-      <main className="pt-20 md:pt-24">
+      <main className="pt-24 md:pt-28">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/seguros/:slug" element={<ServiceDetail />} />

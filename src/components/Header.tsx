@@ -39,7 +39,7 @@ const Header = ({ isScrolled }: HeaderProps) => {
     } else if (query.includes('digital') || query.includes('app') || query.includes('plataforma')) {
       document.getElementById('servicios-digitales')?.scrollIntoView({ behavior: 'smooth' })
     } else if (query.includes('rama') || query.includes('judicial') || query.includes('sura')) {
-      window.location.href = '/rama-judicial'
+      globalThis.location.href = '/rama-judicial'
     } else if (query.includes('contacto') || query.includes('telefono') || query.includes('whatsapp')) {
       document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' })
     } else {
@@ -60,13 +60,13 @@ const Header = ({ isScrolled }: HeaderProps) => {
       }`}
     >
       <nav className="container mx-auto px-4 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-24 md:h-28">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 group">
             <img 
               src="/fonts/logo.png" 
               alt="CONECTA Seguros" 
-              className="h-16 md:h-20 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+              className="h-20 md:h-24 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
             />
           </Link>
 
@@ -94,7 +94,7 @@ const Header = ({ isScrolled }: HeaderProps) => {
                   </Link>
                 )
               } else {
-                const sectionId = item.toLowerCase().replace(/\s+/g, '-')
+                const sectionId = item.toLowerCase().split(/\s+/).join('-')
                 return (
                   <Link
                     key={item}
@@ -102,7 +102,7 @@ const Header = ({ isScrolled }: HeaderProps) => {
                     className="text-white hover:text-conecta-orange transition-colors duration-200 text-sm font-medium"
                     onClick={(e) => {
                       // Si ya estamos en la página principal, hacer scroll suave
-                      if (window.location.pathname === '/') {
+                      if (globalThis.location?.pathname === '/') {
                         e.preventDefault()
                         const element = document.getElementById(sectionId)
                         if (element) {
@@ -220,7 +220,7 @@ const Header = ({ isScrolled }: HeaderProps) => {
                   </Link>
                 )
               } else {
-                const sectionId = item.toLowerCase().replace(/\s+/g, '-')
+                const sectionId = item.toLowerCase().split(/\s+/).join('-')
                 return (
                   <Link
                     key={item}
@@ -229,7 +229,7 @@ const Header = ({ isScrolled }: HeaderProps) => {
                     onClick={(e) => {
                       setIsMenuOpen(false)
                       // Si ya estamos en la página principal, hacer scroll suave
-                      if (window.location.pathname === '/') {
+                      if (globalThis.location?.pathname === '/') {
                         e.preventDefault()
                         setTimeout(() => {
                           const element = document.getElementById(sectionId)

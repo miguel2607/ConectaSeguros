@@ -51,7 +51,18 @@ html {
   }
   
   /* Texto normal usa ExtraLight (font-weight: 200) */
-  p, span, div, a, button, textarea, select, label, li, td, th {
+  /* Excluir font-number y font-system para que usen fuente del sistema */
+  p:not(.font-number):not([class*="font-number"]):not(.font-system):not([class*="font-system"]),
+  span:not(.font-number):not([class*="font-number"]):not(.font-system):not([class*="font-system"]),
+  div:not(.font-number):not([class*="font-number"]):not(.font-system):not([class*="font-system"]),
+  a:not(.font-number):not([class*="font-number"]):not(.font-system):not([class*="font-system"]),
+  button:not(.font-number):not([class*="font-number"]):not(.font-system):not([class*="font-system"]),
+  textarea:not(.font-number):not([class*="font-number"]):not(.font-system):not([class*="font-system"]),
+  select:not(.font-number):not([class*="font-number"]):not(.font-system):not([class*="font-system"]),
+  label:not(.font-number):not([class*="font-number"]):not(.font-system):not([class*="font-system"]),
+  li:not(.font-number):not([class*="font-number"]):not(.font-system):not([class*="font-system"]),
+  td:not(.font-number):not([class*="font-number"]):not(.font-system):not([class*="font-system"]),
+  th:not(.font-number):not([class*="font-number"]):not(.font-system):not([class*="font-system"]) {
     font-family: 'Antipasto', system-ui, sans-serif !important;
     font-weight: 200;
   }
@@ -65,11 +76,40 @@ html {
 }
 
 /* Clase para números, precios, teléfonos, emails, direcciones que NO usan Antipasto */
+/* Mayor especificidad para asegurar que sobrescriba las reglas base */
 @layer utilities {
   .number,
-  .font-number {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  .font-number,
+  .font-number *,
+  span.font-number,
+  p.font-number,
+  div.font-number,
+  [class*="font-number"],
+  /* Asegurar que elementos con números, fechas y símbolos usen fuente del sistema */
+  span:has(> .font-number),
+  p:has(> .font-number),
+  div:has(> .font-number) {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+    font-variant-numeric: tabular-nums;
   }
+}
+
+/* Regla adicional fuera de @layer para máxima especificidad */
+.font-number,
+span.font-number,
+p.font-number,
+div.font-number,
+[class*="font-number"] {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Clase para fechas, resúmenes y texto que debe usar fuente del sistema */
+.font-system,
+.date-text,
+.excerpt-text,
+.summary-text {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
 }
 
 @layer utilities {

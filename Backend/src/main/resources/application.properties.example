@@ -1,0 +1,34 @@
+# Server Configuration (PORT lo inyecta Render en producción)
+server.port=${PORT:8080}
+spring.application.name=conecta-backend
+# Límite body para imágenes base64 en JSON (blogs/servicios)
+server.tomcat.max-http-form-post-size=20MB
+
+# Database Configuration (PostgreSQL)
+# En producción (Render): definir SPRING_DATASOURCE_URL, DB_USERNAME, DB_PASSWORD
+# Ejemplo: jdbc:postgresql://host:5432/conecta_db (Render proporciona DATABASE_URL; puedes usarla como SPRING_DATASOURCE_URL)
+spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/conecta_db}
+spring.datasource.username=${DB_USERNAME:postgres}
+spring.datasource.password=${DB_PASSWORD:}
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# JPA Configuration
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+# CORS (en producción: CORS_ORIGINS=https://tu-frontend.onrender.com)
+spring.web.cors.allowed-origins=${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
+spring.web.cors.allowed-methods=GET,POST,PUT,DELETE,OPTIONS
+spring.web.cors.allowed-headers=*
+spring.web.cors.allow-credentials=true
+
+# JWT Configuration
+# IMPORTANT: Set JWT_SECRET as environment variable in production
+jwt.secret=${JWT_SECRET:conecta_secret_key_2024_very_secure_change_in_production}
+jwt.expiration=${JWT_EXPIRATION:86400000}
+
+# Logging
+logging.level.com.conecta=DEBUG
+logging.level.org.springframework.security=DEBUG
+

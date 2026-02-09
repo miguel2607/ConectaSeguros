@@ -1,129 +1,135 @@
+import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { useEffect } from 'react'
-
-const servicesConfig = {
-  'seguro-hogar': {
-    name: 'Seguro de Hogar',
-    subtitle: 'Protege tu casa, tu familia y todo lo que has construido.',
-    priceFrom: '$80.000 COP al mes',
-    includes: [
-      'Daños por incendio, robo, fenómenos naturales y responsabilidad civil',
-      'Cobertura para muebles, electrodomésticos y objetos de valor',
-      'Asistencia en el hogar (plomería, electricidad, cristales, etc.)',
-      'Coberturas opcionales para equipos electrónicos, bicicletas y otros bienes específicos',
-    ],
-    howItWorks: [
-      'Definimos contigo el valor de la vivienda y contenidos que quieres proteger.',
-      'Te presentamos diferentes niveles de cobertura, deducibles y formas de pago.',
-      'Contratas en minutos y recibes tu póliza digital lista para usar cuando la necesites.',
-      'Te acompañamos en todo el proceso de reclamación en caso de siniestro.',
-    ],
-    idealFor:
-      'Personas y familias en Colombia que quieren cuidar su patrimonio, proteger su hogar frente a eventos inesperados (incendios, robos, daños por agua, etc.) y contar con un respaldo económico para reparar o reemplazar sus bienes.',
-  },
-  'seguro-vida': {
-    name: 'Seguro de Vida',
-    subtitle: 'Tranquilidad financiera para quienes más quieres.',
-    priceFrom: '$70.000 COP al mes',
-    includes: [
-      'Suma asegurada personalizada para tus objetivos',
-      'Cobertura por fallecimiento y opciones con invalidez',
-      'Posibilidad de ahorro e inversión a largo plazo (según el plan)',
-      'Beneficios adicionales como anticipo por enfermedades graves (según el plan contratado)',
-    ],
-    howItWorks: [
-      'Analizamos tu situación actual en Colombia: ingresos, deudas, dependientes económicos y metas.',
-      'Definimos una suma asegurada y un plazo que se adapten a tu presupuesto mensual.',
-      'Te presentamos distintas alternativas (vida temporal, vida entera, con ahorro, etc.) de forma clara y sin letra chiquita.',
-      'Tendrás acompañamiento permanente para ajustar tu plan si tu situación cambia con los años.',
-    ],
-    idealFor:
-      'Personas que quieren proteger a su familia, asegurar el pago de deudas (como créditos de vivienda o educativos) y garantizar estabilidad económica en caso de fallecimiento o invalidez.',
-  },
-  'seguro-vehicular': {
-    name: 'Seguro de Auto',
-    subtitle: 'Conduce en Colombia con la confianza de estar respaldado.',
-    priceFrom: '$120.000 COP al mes',
-    includes: [
-      'Responsabilidad civil obligatoria',
-      'Cobertura amplia por daños, robo total y parcial',
-      'Asistencia vial 24/7 y auto sustituto (según plan)',
-      'Coberturas adicionales como pérdida de llaves, rotura de vidrios y daños en rines (según plan)',
-    ],
-    howItWorks: [
-      'Cotizamos tu vehículo de acuerdo con modelo, año, ciudad y uso (particular o empresarial).',
-      'Eliges entre cobertura básica (solo RC), media o amplia, según el nivel de protección que busques.',
-      'Definimos el valor asegurado y las asistencias adicionales que deseas incluir.',
-      'Puedes pagar de contado o mes a mes con diferentes medios de pago disponibles en Colombia.',
-    ],
-    idealFor:
-      'Personas que utilizan su vehículo todos los días, viajan con su familia o usan el auto para trabajar y necesitan respaldo ante accidentes, robos o daños a terceros.',
-  },
-  'seguro-empresarial': {
-    name: 'Seguro Empresarial',
-    subtitle: 'Protección integral para tu negocio y tus colaboradores.',
-    priceFrom: 'Planes a la medida en COP',
-    includes: [
-      'Cobertura para inmuebles, maquinaria y stock',
-      'Responsabilidad civil frente a terceros',
-      'Seguros para flotillas, accidentes personales y gastos médicos',
-      'Opciones para proteger equipos electrónicos, transporte de mercancías y responsabilidad profesional',
-    ],
-    howItWorks: [
-      'Realizamos un diagnóstico de riesgos de tu negocio (sector, ubicación, activos, personal, etc.).',
-      'Diseñamos un programa de seguros a la medida, combinando diferentes productos según tu realidad.',
-      'Definimos sumas aseguradas, deducibles y condiciones especiales para que el costo sea competitivo.',
-      'Asignamos un ejecutivo de cuenta que te acompaña en la operación diaria y en la atención de siniestros.',
-    ],
-    idealFor:
-      'Empresas pequeñas, medianas y grandes en Colombia que buscan estabilidad, continuidad operativa y protección frente a pérdidas inesperadas o reclamaciones de terceros.',
-  },
-  'seguro-salud': {
-    name: 'Seguro de Salud',
-    subtitle: 'Atención médica privada cuando más la necesitas, en Colombia y el exterior (según plan).',
-    priceFrom: '$250.000 COP al mes',
-    includes: [
-      'Cobertura por hospitalización, cirugías y estudios',
-      'Red de hospitales y médicos a nivel nacional',
-      'Cobertura internacional opcional (según plan)',
-      'Atención en emergencias, maternidad y acceso a especialistas sin largas filas (según el plan elegido)',
-    ],
-    howItWorks: [
-      'Seleccionamos el plan según tu edad, composición familiar, ciudad y presupuesto mensual en COP.',
-      'Definimos deducible y coaseguro para equilibrar el costo de la prima con el nivel de protección que necesitas.',
-      'Te explicamos claramente cómo usar tu póliza: autorizaciones, copagos y canales de atención.',
-      'Recibes tu póliza digital y acceso a la red médica para empezar a usar tu seguro de inmediato.',
-    ],
-    idealFor:
-      'Personas y familias colombianas que desean atención médica de calidad en clínicas privadas sin poner en riesgo sus ahorros ante una hospitalización o tratamiento costoso.',
-  },
-  'asesoria-personalizada': {
-    name: 'Asesoría Personalizada',
-    subtitle: 'Te ayudamos a elegir el seguro correcto para cada etapa de tu vida en Colombia.',
-    priceFrom: 'Sin costo por asesoría',
-    includes: [
-      'Análisis de tu situación actual',
-      'Comparación de diferentes alternativas',
-      'Acompañamiento antes, durante y después de la contratación',
-      'Acompañamiento en renovaciones y ajustes cuando cambian tus necesidades o proyectos',
-    ],
-    howItWorks: [
-      'Agendamos una sesión por teléfono, videollamada o presencial según tu ubicación.',
-      'Analizamos tus objetivos, riesgos y etapa de vida (inicio laboral, familia en crecimiento, emprendimiento, retiro, etc.).',
-      'Comparamos diferentes aseguradoras y alternativas para presentarte solo las opciones que encajan contigo.',
-      'Te entregamos una propuesta clara, con ejemplos en pesos colombianos y sin letra chiquita.',
-    ],
-    idealFor:
-      'Personas y empresas que quieren tomar decisiones informadas, entender bien qué están comprando y tener un aliado de confianza a largo plazo.',
-  },
-} as const
-
-type ServiceSlug = keyof typeof servicesConfig
+import { api } from '../config/api'
+import { isIconImage, resolveIconSrc } from '../utils/serviceIcon'
 
 const ServiceDetail = () => {
-  const { slug } = useParams<{ slug: ServiceSlug }>()
+  const { slug } = useParams<{ slug: string }>()
+  const [serviceData, setServiceData] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  if (!slug || !servicesConfig[slug]) {
+  // Manejar scroll a secciones cuando se navega con hash (solo cuando los datos estén cargados)
+  useEffect(() => {
+    if (!isLoading && serviceData) {
+      const hash = globalThis.location?.hash
+      if (hash) {
+        setTimeout(() => {
+          const element = document.getElementById(hash.substring(1))
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' })
+          }
+        }, 100)
+      }
+    }
+  }, [isLoading, serviceData])
+
+  useEffect(() => {
+    if (slug) {
+      loadService(slug)
+    }
+  }, [slug])
+
+  const loadService = async (serviceSlug: string) => {
+    try {
+      setIsLoading(true)
+      const data = await api.getServiceBySlug(serviceSlug)
+      if (!data) {
+        console.error('No se recibieron datos del servicio')
+        return
+      }
+      
+      // Mapear datos de la API al formato esperado
+      const description = data.description || 'Información detallada disponible al contactarnos.'
+      
+      // Procesar "¿Qué incluye?" - usar el campo includes si existe, sino generar desde description
+      let includesArray: string[] = []
+      const includesRaw = data.includes
+      if (includesRaw?.trim()) {
+        // Si existe el campo includes, dividir por líneas
+        includesArray = includesRaw.split('\n')
+          .map((line: string) => line.trim())
+          .filter((line: string) => line.length > 0)
+      } else {
+        // Fallback: generar desde description (lógica anterior)
+        if (description.includes('\n')) {
+          includesArray = description.split('\n')
+            .map((line: string) => line.trim())
+            .filter((line: string) => line.length > 0)
+            .map((line: string) => line.replace(/^[-•*]\s*/, '').replace(/^\d+[.)]\s*/, ''))
+        } else if (description.includes('•') || description.includes('-')) {
+          includesArray = description.split(/[•-]/)
+            .map((item: string) => item.trim())
+            .filter((item: string) => item.length > 0)
+        } else if (description.includes('.')) {
+          includesArray = description.split('.')
+            .map((sentence: string) => sentence.trim())
+            .filter((sentence: string) => sentence.length > 0 && sentence.length > 10)
+        } else {
+          includesArray = [description]
+        }
+      }
+      
+      if (includesArray.length === 0) {
+        includesArray = [description]
+      }
+      
+      // Procesar "¿Cómo funciona?" - usar el campo howItWorks si existe
+      let howItWorksArray: string[] = []
+      const howItWorksRaw = data.howItWorks
+      if (howItWorksRaw?.trim()) {
+        // Si existe el campo howItWorks, dividir por líneas
+        howItWorksArray = howItWorksRaw.split('\n')
+          .map((line: string) => line.trim())
+          .filter((line: string) => line.length > 0)
+      } else {
+        // Fallback: valores por defecto
+        howItWorksArray = [
+          'Contacta con nosotros para una cotización personalizada',
+          'Te presentamos diferentes opciones adaptadas a tus necesidades',
+          'Elige el plan que mejor se adapte a tu presupuesto',
+          'Disfruta de la tranquilidad de estar protegido',
+        ]
+      }
+      
+      // Procesar "¿Para quién es ideal?" - usar el campo idealFor si existe
+      const idealForRaw = data.idealFor
+      let idealFor: string
+      if (idealForRaw?.trim()) {
+        idealFor = idealForRaw
+      } else if (description.length > 200) {
+        idealFor = description.substring(0, 200) + '...'
+      } else {
+        idealFor = description
+      }
+      
+      setServiceData({
+        name: data.title || 'Servicio',
+        subtitle: description.length > 150 ? description.substring(0, 150) + '...' : description,
+        fullDescription: description,
+        priceFrom: data.priceFrom || 'Consultar precio',
+        includes: includesArray,
+        howItWorks: howItWorksArray,
+        idealFor: idealFor,
+        icon: data.icon || '🛡️',
+      })
+    } catch (error) {
+      console.error('Error loading service:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 lg:px-8 py-16">
+        <div className="text-center">
+          <p className="text-gray-600">Cargando servicio...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!serviceData) {
     return (
       <div className="container mx-auto px-4 lg:px-8 py-16">
         <p className="text-center text-gray-600 mb-4">
@@ -141,57 +147,48 @@ const ServiceDetail = () => {
     )
   }
 
-  const service = servicesConfig[slug]
-  const serviceEmoji: Record<ServiceSlug, string> = {
-    'seguro-hogar': '🏠',
-    'seguro-vida': '🛡️',
-    'seguro-vehicular': '🚗',
-    'seguro-empresarial': '🏢',
-    'seguro-salud': '🏥',
-    'asesoria-personalizada': '🤝',
-  }
-  const emoji = serviceEmoji[slug]
-
-  // Manejar scroll a secciones cuando se navega con hash
-  useEffect(() => {
-    const hash = window.location.hash
-    if (hash) {
-      setTimeout(() => {
-        const element = document.getElementById(hash.substring(1))
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' })
-        }
-      }, 100)
-    }
-  }, [])
+  const service = serviceData
+  const icon = service.icon || '🛡️'
 
   return (
     <div className="bg-gray-50 min-h-[calc(100vh-5rem)]">
-      <div className="bg-conecta-orange text-white py-12">
+      <div className="bg-conecta-orange text-white py-12 font-medium">
         <div className="container mx-auto px-4 lg:px-8">
           <p className="text-sm uppercase tracking-[0.2em] mb-2">Seguro</p>
           <h1 className="text-3xl md:text-4xl font-extrabold mb-2">
             {service.name}
           </h1>
-          <p className="max-w-2xl text-base md:text-lg text-white/90">
-            {service.subtitle.split(/(COP|pesos colombianos|\d+[.,]?\d*)/).map((part, idx) => {
-              if (/^\d+[.,]?\d*$/.test(part) || part === 'COP' || part === 'pesos colombianos') {
-                return <span key={idx} className="font-number">{part}</span>
-              }
-              return <span key={idx}>{part}</span>
-            })}
+          <p className="max-w-2xl text-base md:text-lg text-white/90 leading-relaxed font-medium">
+            {service.fullDescription ? (
+              service.fullDescription.split(/(\d+[.,]?\d*)/).map((part: string, idx: number) => {
+                const key = `${part}-${idx}`
+                if (/^\d+[.,]?\d*$/.test(part)) {
+                  return <span key={key} className="font-number">{part}</span>
+                }
+                return <span key={key}>{part}</span>
+              })
+            ) : (
+              service.subtitle.split(/(\d+[.,]?\d*)/).map((part: string, idx: number) => {
+                const key = `${part}-${idx}`
+                if (/^\d+[.,]?\d*$/.test(part)) {
+                  return <span key={key} className="font-number">{part}</span>
+                }
+                return <span key={key}>{part}</span>
+              })
+            )}
           </p>
           <p className="mt-4 text-sm font-semibold">
-            Desde <span className="text-lg md:text-xl font-number">
-              {service.priceFrom.split(/(\$|COP|\d+[.,]?\d*)/).map((part, idx) => {
-                if (/^\$/.test(part) || part === 'COP' || /^\d+[.,]?\d*$/.test(part)) {
-                  return <span key={idx} className="font-number">{part}</span>
+            Desde <span className="text-lg md:text-xl">
+              {service.priceFrom.split(/(\d+[.,]?\d*)/).map((part: string, idx: number) => {
+                const key = `${part}-${idx}`
+                if (/^\d+[.,]?\d*$/.test(part)) {
+                  return <span key={key} className="font-number">{part}</span>
                 }
-                return <span key={idx}>{part}</span>
+                return <span key={key}>{part}</span>
               })}
             </span>*
           </p>
-          <p className="text-[11px] text-white/80 mt-1">
+          <p className="text-[11px] text-white/80 mt-1 font-medium">
             *Precio estimado, puede variar según perfil y coberturas.
           </p>
         </div>
@@ -201,48 +198,58 @@ const ServiceDetail = () => {
         <div className="grid lg:grid-cols-[1fr_360px] gap-10 items-start">
           <div className="space-y-10">
         <section className="grid md:grid-cols-2 gap-8">
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <h2 className="text-2xl font-semibold text-conecta-blue mb-4">
-              ¿Qué incluye?
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-conecta-blue mb-6 flex items-center space-x-2">
+              <span>📋</span>
+              <span>¿Qué incluye este servicio?</span>
             </h2>
-            <ul className="space-y-2 text-base text-gray-700">
-              {service.includes.map((item) => (
-                <li key={item} className="flex items-start space-x-2">
-                  <span className="mt-1 w-2 h-2 rounded-full bg-conecta-orange" />
-                  <span>
-                    {item.split(/(COP|\d+[.,]?\d*|24\/7)/).map((part, idx) => {
-                      if (part === 'COP' || /^\d+[.,]?\d*$/.test(part) || part === '24/7') {
-                        return <span key={idx} className="font-number">{part}</span>
+            <ul className="space-y-4 text-base text-gray-700 font-medium">
+              {service.includes.map((item: string, index: number) => {
+                const itemKey = `${item}-${index}`
+                return (
+                <li key={itemKey} className="flex items-start space-x-3">
+                  <span className="mt-1.5 flex-shrink-0 w-2 h-2 rounded-full bg-conecta-orange" />
+                  <span className="leading-relaxed">
+                    {item.split(/(\d+[.,]?\d*)/).map((part: string, idx: number) => {
+                      const key = `${part}-${idx}`
+                      if (/^\d+[.,]?\d*$/.test(part)) {
+                        return <span key={key} className="font-number font-semibold text-conecta-orange">{part}</span>
                       }
-                      return <span key={idx}>{part}</span>
+                      return <span key={key}>{part}</span>
                     })}
                   </span>
                 </li>
-              ))}
+              )})}
             </ul>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <h2 className="text-2xl font-semibold text-conecta-blue mb-4">
-              ¿Cómo funciona?
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-conecta-blue mb-6 flex items-center space-x-2">
+              <span>⚙️</span>
+              <span>¿Cómo funciona?</span>
             </h2>
-            <div className="space-y-4">
-              {service.howItWorks.map((step, index) => {
-                const icons = ['🏠', '📋', '⏱️', '🤝']
+            <div className="space-y-5">
+              {service.howItWorks.map((step: string, index: number) => {
+                const icons = ['📞', '📋', '✅', '🎉']
                 const icon = icons[index] || '✓'
+                const key = `${step}-${index}`
                 return (
-                  <div key={step} className="flex items-start space-x-4">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-2xl">
+                  <div key={key} className="flex items-start space-x-4 bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors">
+                    <div className="flex-shrink-0 w-14 h-14 rounded-full bg-conecta-orange/10 flex items-center justify-center text-2xl">
                       {icon}
                     </div>
-                    <p className="text-base text-gray-700 leading-relaxed flex-1 pt-2">
-                      {step.split(/(COP|\d+[.,]?\d*)/).map((part, idx) => {
-                        if (part === 'COP' || /^\d+[.,]?\d*$/.test(part)) {
-                          return <span key={idx} className="font-number">{part}</span>
-                        }
-                        return <span key={idx}>{part}</span>
-                      })}
-                    </p>
+                    <div className="flex-1 pt-1">
+                      <p className="text-base font-semibold text-conecta-blue mb-1">Paso <span className="font-number">{index + 1}</span></p>
+                      <p className="text-base text-gray-700 leading-relaxed font-medium">
+                        {step.split(/(\d+[.,]?\d*)/).map((part: string, idx: number) => {
+                          const key = `${part}-${idx}`
+                          if (/^\d+[.,]?\d*$/.test(part)) {
+                            return <span key={key} className="font-number">{part}</span>
+                          }
+                          return <span key={key}>{part}</span>
+                        })}
+                      </p>
+                    </div>
                   </div>
                 )
               })}
@@ -251,18 +258,32 @@ const ServiceDetail = () => {
         </section>
 
         <section className="grid md:grid-cols-3 gap-8">
-          <div className="md:col-span-2 bg-white rounded-2xl shadow-lg p-6">
-            <h2 className="text-2xl font-semibold text-conecta-blue mb-4">
-              ¿Para quién es ideal?
+          <div className="md:col-span-2 bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-conecta-blue mb-6 flex items-center space-x-2">
+              <span>👥</span>
+              <span>¿Para quién es ideal este servicio?</span>
             </h2>
-            <p className="text-base text-gray-700 leading-relaxed">
-              {service.idealFor.split(/(COP|\d+[.,]?\d*)/).map((part, idx) => {
-                if (part === 'COP' || /^\d+[.,]?\d*$/.test(part)) {
-                  return <span key={idx} className="font-number">{part}</span>
-                }
-                return <span key={idx}>{part}</span>
-              })}
-            </p>
+            <div className="prose prose-lg max-w-none">
+              <p className="text-base text-gray-700 leading-relaxed whitespace-pre-line font-medium">
+                {service.idealFor ? (
+                  service.idealFor.split(/(\d+[.,]?\d*)/).map((part: string, idx: number) => {
+                    const key = `${part}-${idx}`
+                    if (/^\d+[.,]?\d*$/.test(part)) {
+                      return <span key={key} className="font-number font-semibold text-conecta-orange">{part}</span>
+                    }
+                    return <span key={key}>{part}</span>
+                  })
+                ) : (
+                  service.fullDescription.split(/(\d+[.,]?\d*)/).map((part: string, idx: number) => {
+                    const key = `${part}-${idx}`
+                    if (/^\d+[.,]?\d*$/.test(part)) {
+                      return <span key={key} className="font-number font-semibold text-conecta-orange">{part}</span>
+                    }
+                    return <span key={key}>{part}</span>
+                  })
+                )}
+              </p>
+            </div>
           </div>
           <div className="bg-conecta-blue text-white rounded-2xl p-6 flex flex-col justify-between">
             <div>
@@ -290,28 +311,43 @@ const ServiceDetail = () => {
         </div>
           </div>
 
-          {/* Side visual (emoticón grande) */}
+          {/* Side visual (icono o imagen del servicio) - imagen que sobresale */}
           <aside className="lg:sticky lg:top-28 space-y-6">
             <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-              <div className="text-[110px] leading-none mb-4">{emoji}</div>
+              <div className="flex justify-center items-center mb-6 -mx-2">
+                {isIconImage(icon) ? (
+                  <div className="relative w-full max-w-[300px] aspect-square rounded-2xl bg-gradient-to-br from-conecta-orange/15 to-conecta-blue/10 p-5 flex items-center justify-center shadow-[0_12px_40px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.06)] ring-2 ring-conecta-orange/30 ring-offset-4 ring-offset-white -translate-y-1">
+                    <img
+                      src={resolveIconSrc(icon)}
+                      alt={service.name}
+                      className="w-full h-full object-contain drop-shadow-xl"
+                    />
+                  </div>
+                ) : (
+                  <div className="rounded-2xl bg-gradient-to-br from-conecta-orange/10 to-conecta-blue/5 p-6 min-h-[12rem] flex items-center justify-center">
+                    <span className="text-[110px] leading-none" aria-hidden>{icon}</span>
+                  </div>
+                )}
+              </div>
               <h3 className="text-xl font-semibold text-conecta-blue mb-2">
                 {service.name}
               </h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                {service.subtitle}
+              <p className="text-sm text-gray-600 leading-relaxed font-medium">
+                {service.fullDescription || service.subtitle}
               </p>
               <div className="mt-5 rounded-xl bg-gray-50 border border-gray-200 p-4">
                 <p className="text-xs text-gray-500 mb-1">Desde</p>
                 <p className="text-2xl font-extrabold text-conecta-blue">
-                  {service.priceFrom.split(/(\$|COP|\d+[.,]?\d*)/).map((part, idx) => {
-                    if (/^\$/.test(part) || part === 'COP' || /^\d+[.,]?\d*$/.test(part)) {
-                      return <span key={idx} className="font-number">{part}</span>
+                  {service.priceFrom.split(/(\d+[.,]?\d*)/).map((part: string, idx: number) => {
+                    const key = `${part}-${idx}`
+                    if (/^\d+[.,]?\d*$/.test(part)) {
+                      return <span key={key} className="font-number">{part}</span>
                     }
-                    return <span key={idx}>{part}</span>
+                    return <span key={key}>{part}</span>
                   })}
                 </p>
                 <p className="text-[11px] text-gray-500 mt-1">
-                  Precio estimado en <span className="font-number">COP</span>.
+                  Precio estimado en COP.
                 </p>
               </div>
               <div className="mt-6">

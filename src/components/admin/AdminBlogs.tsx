@@ -67,7 +67,7 @@ const AdminBlogs = () => {
       if (editingId) {
         // Actualizar blog existente
         const blogId = parseInt(editingId)
-        const updatedBlog = await api.updateBlog(blogId, {
+        await api.updateBlog(blogId, {
           title: formData.title,
           excerpt: formData.excerpt,
           content: formData.content,

@@ -4,11 +4,6 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8082/api';
 
-interface ApiResponse<T> {
-  data?: T;
-  error?: string;
-}
-
 class ApiClient {
   private baseURL: string;
 
@@ -39,9 +34,9 @@ class ApiClient {
   ): Promise<T> {
     const token = this.getToken();
 
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...(options.headers as Record<string, string>),
     };
 
     if (token) {

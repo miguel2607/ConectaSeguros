@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Link, useParams, useNavigate } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { api } from '../config/api'
 import { isIconImage, resolveIconSrc } from '../utils/serviceIcon'
 
 const BlogDetail = () => {
   const { slug } = useParams<{ slug: string }>()
-  const navigate = useNavigate()
   const [blog, setBlog] = useState<any>(null)
   const [otherBlogs, setOtherBlogs] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -165,7 +164,7 @@ const BlogDetail = () => {
               </span>
             </div>
             <h1 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4">
-              {post.title.split(/(\d+)/).map((part, idx) => {
+              {post.title.split(/(\d+)/).map((part: string, idx: number) => {
                 if (/^\d+$/.test(part)) {
                   return <span key={idx} className="font-number">{part}</span>
                 }
@@ -218,7 +217,7 @@ const BlogDetail = () => {
                     <div className="mb-10 pt-10 border-t border-gray-200">
                       {section.title !== `Párrafo ${index + 1}` && section.title !== `Sección ${index + 1}` && section.title !== blog.title && (
                         <h2 className="text-2xl sm:text-3xl font-bold text-conecta-blue mb-6 pb-3 border-b-2 border-conecta-orange inline-block">
-                          {section.title.split(/(\d+)/).map((part, idx) => {
+                          {section.title.split(/(\d+)/).map((part: string, idx: number) => {
                             if (/^\d+$/.test(part)) {
                               return <span key={idx} className="font-number">{part}</span>
                             }
@@ -232,7 +231,7 @@ const BlogDetail = () => {
                   {/* Contenido de la sección */}
                   <div className={`${index === 0 ? 'bg-white' : 'bg-gray-50/80 rounded-2xl p-6 sm:p-8 border border-gray-100'} transition-all hover:shadow-md`}>
                     <div className="space-y-6 max-w-3xl">
-                      {section.content.split(/\n/).map((paragraph, pIdx) => {
+                      {section.content.split(/\n/).map((paragraph: string, pIdx: number) => {
                         if (!paragraph.trim()) return null
                         
                         const isHeading = paragraph.length < 80 && (
@@ -250,7 +249,7 @@ const BlogDetail = () => {
                         
                         return (
                           <p key={pIdx} className={`${index === 0 ? 'text-lg sm:text-xl' : 'text-base'} leading-[1.75] text-gray-700 font-system font-medium`}>
-                            {paragraph.split(/(\d+[.,]?\d*)/).map((part, idx) => {
+                            {paragraph.split(/(\d+[.,]?\d*)/).map((part: string, idx: number) => {
                               if (/^\d+[.,]?\d*$/.test(part)) {
                                 return <span key={idx} className="font-number font-semibold text-conecta-orange">{part}</span>
                               }
@@ -310,7 +309,7 @@ const BlogDetail = () => {
                   )}
                 </div>
                 <h3 className="text-lg font-bold text-conecta-blue mb-3 line-clamp-3">
-                  {post.title.split(/(\d+)/).map((part, idx) => {
+                  {post.title.split(/(\d+)/).map((part: string, idx: number) => {
                     if (/^\d+$/.test(part)) {
                       return <span key={idx} className="font-number">{part}</span>
                     }
@@ -343,7 +342,7 @@ const BlogDetail = () => {
                             href={`#section-${idx}`}
                             className="text-sm text-gray-700 leading-relaxed hover:text-conecta-orange transition-colors cursor-pointer"
                           >
-                            {s.title.split(/(\d+)/).map((part, pIdx) => {
+                            {s.title.split(/(\d+)/).map((part: string, pIdx: number) => {
                               if (/^\d+$/.test(part)) {
                                 return <span key={pIdx} className="font-number">{part}</span>
                               }

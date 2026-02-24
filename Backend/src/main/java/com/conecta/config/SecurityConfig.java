@@ -46,9 +46,10 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // Health check (monitoreo / wake-up) - sin auth
+                .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                 // Autenticación pública
                 .requestMatchers("/api/auth/**").permitAll()
-                
                 // GET públicos (lectura para todos) - IMPORTANTE: deben ir antes de anyRequest()
                 .requestMatchers(HttpMethod.GET, "/api/pricing").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/blogs/**").permitAll()

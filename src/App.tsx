@@ -10,9 +10,16 @@ import BlogDetail from './pages/BlogDetail'
 import RamaJudicial from './pages/RamaJudicial'
 import Admin from './pages/Admin'
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8082/api'
+
 function App() {
   const [isScrolled, setIsScrolled] = useState(false)
   const location = useLocation()
+
+  // Health check al cargar: despertar backend en Render (evita cold start)
+  useEffect(() => {
+    fetch(`${API_BASE}/health`).catch(() => {})
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {

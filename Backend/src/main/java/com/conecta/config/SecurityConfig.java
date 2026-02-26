@@ -46,8 +46,9 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Health check (monitoreo / wake-up) - GET y HEAD para UptimeRobot
+                // Health check (monitoreo / wake-up). /api/health/db toca la BD para evitar pausa en Supabase
                 .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/health/db").permitAll()
                 .requestMatchers(HttpMethod.HEAD, "/api/health").permitAll()
                 // Autenticación pública
                 .requestMatchers("/api/auth/**").permitAll()

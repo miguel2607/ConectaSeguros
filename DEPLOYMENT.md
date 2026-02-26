@@ -61,6 +61,54 @@ Si usas otro proveedor (Railway, Aiven, etc.), crea una base PostgreSQL y anota 
 
 **Crear tablas:** Con `spring.jpa.hibernate.ddl-auto=update` el backend crea/actualiza las tablas al arrancar. Si prefieres hacerlo a mano, ejecuta `Backend/src/main/resources/schema.sql` en tu base. Luego ejecuta `init-admin.sql` para crear el usuario admin (password por defecto: admin123).
 
+### 2.1 Usar Supabase como base de datos (recomendado, sin IP estática)
+
+Supabase ofrece PostgreSQL en la nube, acepta conexiones desde cualquier IP y no requiere configurar MySQL remoto ni IP estática.
+
+**Paso 1 – Crear proyecto en Supabase**
+
+1. Entra a [supabase.com](https://supabase.com) e inicia sesión o regístrate.
+2. **New project**.
+3. **Name:** por ejemplo `conecta-seguros`.
+4. **Database Password:** crea una contraseña segura y **anótala** (la usarás en Render).
+5. **Region:** elige la más cercana (ej. South America si está disponible).
+6. **Create new project** y espera a que termine de crearse.
+
+**Paso 2 – Obtener datos de conexión**
+
+1. En el proyecto, ve a **Project Settings** (icono de engranaje) → **Database**.
+2. En **Connection string** elige **URI**.
+3. Anota:
+   - **Host:** algo como `db.xxxxxxxxxxxx.supabase.co` (en "Connection info").
+   - **Database:** `postgres`.
+   - **User:** `postgres`.
+   - **Password:** la que pusiste al crear el proyecto (si no la recuerdas, **Reset database password** en esa misma página).
+
+**Paso 3 – Configurar variables en Render (backend)**
+
+1. Render → tu **Web Service** del backend → **Environment**.
+2. Añade o edita estas variables (quita las de MySQL si las tenías):
+
+| Key | Value |
+|-----|--------|
+| **SPRING_DATASOURCE_URL** | `jdbc:postgresql://HOST:5432/postgres?sslmode=require` (sustituye **HOST** por el host de Supabase, ej. `db.abcdefghijk.supabase.co`) |
+| **DB_USERNAME** | `postgres` |
+| **DB_PASSWORD** | La contraseña de la base de datos de Supabase |
+| **CORS_ORIGINS** | `https://conectaseguros.co,https://www.conectaseguros.co` (o las URLs de tu frontend) |
+| **JWT_SECRET** | Una cadena larga y aleatoria |
+
+No hace falta **DB_DRIVER** ni **JPA_DIALECT**: el backend ya usa PostgreSQL por defecto.
+
+**Paso 4 – Guardar y redesplegar**
+
+1. **Save Changes** en Environment.
+2. Render redesplegará el backend. Al arrancar, se conectará a Supabase y creará las tablas y el usuario admin automáticamente.
+
+**Paso 5 – Probar**
+
+- Abre `https://conectaseguros-backend.onrender.com/api/health` → debe responder `{"status":"ok"}`.
+- Entra a tu sitio y al panel admin; login con **admin** / **admin123**.
+
 ---
 
 ## 3. Desplegar Backend en Render

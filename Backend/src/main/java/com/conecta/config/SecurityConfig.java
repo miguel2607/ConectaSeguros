@@ -53,6 +53,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 // GET públicos (lectura para todos) - IMPORTANTE: deben ir antes de anyRequest()
                 .requestMatchers(HttpMethod.GET, "/api/pricing").permitAll()
+                .requestMatchers(HttpMethod.HEAD, "/api/pricing").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/blogs/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/services/**").permitAll()
                 

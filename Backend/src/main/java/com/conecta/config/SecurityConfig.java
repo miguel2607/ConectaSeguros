@@ -51,9 +51,11 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.HEAD, "/api/health").permitAll()
                 // Autenticación pública
                 .requestMatchers("/api/auth/**").permitAll()
-                // GET públicos (lectura para todos) - IMPORTANTE: deben ir antes de anyRequest()
+                // GET y HEAD públicos (lectura y monitoreo UptimeRobot)
                 .requestMatchers(HttpMethod.GET, "/api/blogs/**").permitAll()
+                .requestMatchers(HttpMethod.HEAD, "/api/blogs/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/services/**").permitAll()
+                .requestMatchers(HttpMethod.HEAD, "/api/services/**").permitAll()
                 
                 // Endpoints de escritura requieren autenticación
                 .requestMatchers(HttpMethod.POST, "/api/blogs/**").authenticated()

@@ -14,7 +14,6 @@ const Header = ({ isScrolled }: HeaderProps) => {
     'INICIO',
     'NOSOTROS',
     'SOLUCIONES',
-    'SERVICIOS DIGITALES',
     'BLOG',
     'CONTACTO',
     'RAMA JUDICIAL-SURA'
@@ -37,9 +36,9 @@ const Header = ({ isScrolled }: HeaderProps) => {
     } else if (query.includes('vida') || query.includes('salud') || query.includes('familia')) {
       document.getElementById('soluciones')?.scrollIntoView({ behavior: 'smooth' })
     } else if (query.includes('digital') || query.includes('app') || query.includes('plataforma')) {
-      document.getElementById('servicios-digitales')?.scrollIntoView({ behavior: 'smooth' })
+      document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' })
     } else if (query.includes('rama') || query.includes('judicial') || query.includes('sura')) {
-      globalThis.location.href = '/rama-judicial'
+      globalThis.location.href = 'https://www.caicedoseguros.com/servicios'
     } else if (query.includes('contacto') || query.includes('telefono') || query.includes('whatsapp')) {
       document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' })
     } else {
@@ -78,20 +77,22 @@ const Header = ({ isScrolled }: HeaderProps) => {
                   <Link
                     key={item}
                     to="/"
-                    className="text-white hover:text-conecta-orange transition-colors duration-200 text-sm font-medium"
+                    className="text-white hover:text-conecta-orange transition-colors duration-200 text-base font-semibold"
                   >
                     {item}
                   </Link>
                 )
               } else if (item === 'RAMA JUDICIAL-SURA') {
                 return (
-                  <Link
+                  <a
                     key={item}
-                    to="/rama-judicial"
-                    className="text-white hover:text-conecta-orange transition-colors duration-200 text-sm font-medium"
+                    href="https://www.caicedoseguros.com/servicios"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white hover:text-conecta-orange transition-colors duration-200 text-base font-semibold"
                   >
                     {item}
-                  </Link>
+                  </a>
                 )
               } else {
                 const sectionId = item.toLowerCase().split(/\s+/).join('-')
@@ -99,7 +100,7 @@ const Header = ({ isScrolled }: HeaderProps) => {
                   <Link
                     key={item}
                     to={`/#${sectionId}`}
-                    className="text-white hover:text-conecta-orange transition-colors duration-200 text-sm font-medium"
+                    className="text-white hover:text-conecta-orange transition-colors duration-200 text-base font-semibold"
                     onClick={(e) => {
                       // Si ya estamos en la página principal, hacer scroll suave
                       if (globalThis.location?.pathname === '/') {
@@ -202,7 +203,7 @@ const Header = ({ isScrolled }: HeaderProps) => {
                   <Link
                     key={item}
                     to="/"
-                    className="block py-2 text-white hover:text-conecta-orange transition-colors duration-200 text-sm font-medium"
+                    className="block py-2 text-white hover:text-conecta-orange transition-colors duration-200 text-base font-semibold"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {item}
@@ -210,14 +211,16 @@ const Header = ({ isScrolled }: HeaderProps) => {
                 )
               } else if (item === 'RAMA JUDICIAL-SURA') {
                 return (
-                  <Link
+                  <a
                     key={item}
-                    to="/rama-judicial"
-                    className="block py-2 text-white hover:text-conecta-orange transition-colors duration-200 text-sm font-medium"
+                    href="https://www.caicedoseguros.com/servicios"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block py-2 text-white hover:text-conecta-orange transition-colors duration-200 text-base font-semibold"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {item}
-                  </Link>
+                  </a>
                 )
               } else {
                 const sectionId = item.toLowerCase().split(/\s+/).join('-')
@@ -225,7 +228,7 @@ const Header = ({ isScrolled }: HeaderProps) => {
                   <Link
                     key={item}
                     to={`/#${sectionId}`}
-                    className="block py-2 text-white hover:text-conecta-orange transition-colors duration-200 text-sm font-medium"
+                    className="block py-2 text-white hover:text-conecta-orange transition-colors duration-200 text-base font-semibold"
                     onClick={(e) => {
                       setIsMenuOpen(false)
                       // Si ya estamos en la página principal, hacer scroll suave

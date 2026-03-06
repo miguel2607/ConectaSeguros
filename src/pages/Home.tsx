@@ -4,7 +4,6 @@ import Services from '../components/Services'
 import Statistics from '../components/Statistics'
 import Benefits from '../components/Benefits'
 import Process from '../components/Process'
-import DigitalServices from '../components/DigitalServices'
 import QuoteCalculator from '../components/QuoteCalculator'
 import Testimonials from '../components/Testimonials'
 import Blog from '../components/Blog'
@@ -20,7 +19,6 @@ const Home = () => {
       <Services />
       <Benefits />
       <Process />
-      <DigitalServices />
       <QuoteCalculator />
       <Testimonials />
       <Blog />

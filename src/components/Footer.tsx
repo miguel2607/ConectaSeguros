@@ -7,40 +7,22 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           {/* Logo and Description */}
           <div className="col-span-1">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-conecta-orange"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                  />
-                </svg>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-white font-bold text-xl leading-tight">
-                  CONECTA
-                </span>
-                <span className="text-conecta-orange font-semibold text-xs leading-tight">
-                  seguros
-                </span>
-              </div>
-            </div>
-            <p className="text-gray-300 text-sm">
+            <Link to="/" className="inline-block mb-4">
+              <img
+                src="/fonts/logo.png"
+                alt="CONECTA Seguros"
+                className="h-14 md:h-16 w-auto object-contain"
+              />
+            </Link>
+            <p className="text-white text-base md:text-lg leading-relaxed">
               Generando tranquilidad y haciendo conexiones que protegen lo que más valoras.
             </p>
           </div>
 
           {/* Quick Links */}
           <div className="section-fade-in-delayed">
-            <h4 className="mb-4">Enlaces Rápidos</h4>
-            <ul className="space-y-2 text-sm text-gray-300">
+            <h4 className="mb-4 text-white font-bold text-lg md:text-xl">Enlaces Rápidos</h4>
+            <ul className="space-y-2 text-base md:text-lg text-white">
               <li>
                 <a href="#inicio" className="hover:text-conecta-orange transition-colors">
                   Inicio
@@ -66,8 +48,8 @@ const Footer = () => {
 
           {/* Services */}
           <div className="section-fade-in-delayed">
-            <h4 className="mb-4">Servicios</h4>
-            <ul className="space-y-2 text-sm text-gray-300">
+            <h4 className="mb-4 text-white font-bold text-lg md:text-xl">Servicios</h4>
+            <ul className="space-y-2 text-base md:text-lg text-white">
               <li>
                 <a href="#soluciones" className="hover:text-conecta-orange transition-colors">
                   Seguros de Hogar
@@ -90,38 +72,16 @@ const Footer = () => {
               </li>
             </ul>
           </div>
-
-          {/* Legal */}
-          <div className="section-fade-in-delayed">
-            <h4 className="mb-4">Legal</h4>
-            <ul className="space-y-2 text-sm text-gray-300">
-              <li>
-                <a href="/#aviso-de-privacidad" className="hover:text-conecta-orange transition-colors">
-                  Aviso de Privacidad
-                </a>
-              </li>
-              <li>
-                <a href="/#terminos-y-condiciones" className="hover:text-conecta-orange transition-colors">
-                  Términos y Condiciones
-                </a>
-              </li>
-              <li>
-                <a href="/#politica-de-cookies" className="hover:text-conecta-orange transition-colors">
-                  Política de Cookies
-                </a>
-              </li>
-            </ul>
-          </div>
         </div>
 
-        <div className="border-t border-conecta-blue-light pt-8">
+        <div className="border-t border-white/20 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-            <p className="text-gray-300 text-sm">
+            <p className="text-white text-base md:text-lg">
               © <span className="font-number">{new Date().getFullYear()}</span> CONECTA Seguros. Todos los derechos reservados.
             </p>
             <Link
               to="/admin"
-              className="text-xs text-white/40 hover:text-white/60 transition-colors mt-2 md:mt-0"
+              className="text-sm md:text-base text-white/90 hover:text-white transition-colors mt-2 md:mt-0"
             >
               Panel de Administración
             </Link>
@@ -129,7 +89,7 @@ const Footer = () => {
           <div className="flex space-x-4 mt-4 md:mt-0">
             <a
               href="https://www.instagram.com/conectaseguros.co/?hl=es"
-              className="text-gray-300 hover:text-conecta-orange transition-colors"
+              className="text-white hover:text-conecta-orange transition-colors"
               aria-label="Instagram"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -138,7 +98,7 @@ const Footer = () => {
             </a>
             <a
               href="https://www.tiktok.com/@conectaseguros.co"
-              className="text-gray-300 hover:text-conecta-orange transition-colors"
+              className="text-white hover:text-conecta-orange transition-colors"
               aria-label="TikTok"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -147,7 +107,7 @@ const Footer = () => {
             </a>
             <a
               href="mailto:info@conectaseguros.co"
-              className="text-gray-300 hover:text-conecta-orange transition-colors"
+              className="text-white hover:text-conecta-orange transition-colors"
               aria-label="Email"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

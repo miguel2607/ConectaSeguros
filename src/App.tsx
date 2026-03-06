@@ -7,7 +7,6 @@ import QuickChat from './components/QuickChat'
 import Home from './pages/Home'
 import ServiceDetail from './pages/ServiceDetail'
 import BlogDetail from './pages/BlogDetail'
-import RamaJudicial from './pages/RamaJudicial'
 import Admin from './pages/Admin'
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8082/api'
@@ -49,7 +48,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/seguros/:slug" element={<ServiceDetail />} />
           <Route path="/blog/:slug" element={<BlogDetail />} />
-          <Route path="/rama-judicial" element={<RamaJudicial />} />
           <Route path="/admin" element={<Admin />} />
         </Routes>
       </main>

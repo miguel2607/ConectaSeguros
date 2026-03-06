@@ -29,7 +29,7 @@ const FloatingSupport = () => {
 
       {/* Social Media Bar */}
       <div className="bg-white rounded-lg shadow-2xl px-4 py-3 flex items-center space-x-3">
-        <span className="text-conecta-blue font-semibold text-sm">¡Síguenos!</span>
+        <span className="text-conecta-blue font-bold text-base">¡Síguenos!</span>
         <a
           href="https://www.instagram.com/conectaseguros.co/?hl=es"
           className="text-conecta-orange hover:text-conecta-orange-dark transition-colors"

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import AdminPricing from '../components/admin/AdminPricing'
 import AdminBlogs from '../components/admin/AdminBlogs'
 import AdminServices from '../components/admin/AdminServices'
 import Toast from '../components/admin/Toast'
@@ -12,7 +11,7 @@ const Admin = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState<'pricing' | 'blogs' | 'services'>('pricing')
+  const [activeTab, setActiveTab] = useState<'blogs' | 'services'>('blogs')
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null)
   const navigate = useNavigate()
 
@@ -188,13 +187,12 @@ const Admin = () => {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex space-x-2">
             {[
-              { id: 'pricing', label: 'Precios Rama Judicial', icon: '💰', color: 'from-yellow-400 to-yellow-600' },
               { id: 'blogs', label: 'Blogs', icon: '📝', color: 'from-blue-400 to-blue-600' },
               { id: 'services', label: 'Servicios', icon: '🛡️', color: 'from-green-400 to-green-600' },
             ].map((tab) => (
               <motion.button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as 'pricing' | 'blogs' | 'services')}
+                onClick={() => setActiveTab(tab.id as 'blogs' | 'services')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={`relative px-8 py-4 font-bold transition-all duration-300 border-b-4 ${
@@ -231,7 +229,6 @@ const Admin = () => {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            {activeTab === 'pricing' && <AdminPricing />}
             {activeTab === 'blogs' && <AdminBlogs />}
             {activeTab === 'services' && <AdminServices />}
           </motion.div>

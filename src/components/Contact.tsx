@@ -122,11 +122,11 @@ const Contact = () => {
                 </div>
                 <button
                   type="submit"
-                  className="w-full px-8 py-4 bg-conecta-orange text-white font-bold rounded-lg hover:bg-conecta-orange-dark transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  className="w-full px-8 py-4 bg-conecta-orange text-white font-bold text-lg rounded-lg hover:bg-conecta-orange-dark transition-all duration-300 transform hover:scale-105 shadow-lg"
                 >
                   Enviar por WhatsApp
                 </button>
-                <p className="text-xs text-gray-500 leading-relaxed">
+                <p className="text-sm md:text-base text-gray-700 leading-relaxed">
                   Al enviar, se abrirá WhatsApp con el mensaje prellenado para que lo envíes al número de CONECTA Seguros.
                 </p>
               </form>

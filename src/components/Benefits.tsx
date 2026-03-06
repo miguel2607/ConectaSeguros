@@ -2,37 +2,37 @@ import { motion } from 'framer-motion'
 
 const benefits = [
   {
-    icon: '🛡️',
+    image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&q=80',
     title: 'Protección Completa',
     description:
       'Coberturas diseñadas para proteger lo que más valoras, desde tu hogar hasta tu negocio.',
   },
   {
-    icon: '💰',
+    image: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=400&q=80',
     title: 'Precios Competitivos',
     description:
       'Planes flexibles que se adaptan a tu presupuesto sin comprometer la calidad del servicio.',
   },
   {
-    icon: '⚡',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&q=80',
     title: 'Proceso Rápido',
     description:
       'Contrata tu seguro en minutos con nuestro proceso digitalizado y sin complicaciones.',
   },
   {
-    icon: '👥',
+    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&q=80',
     title: 'Asesoría Personalizada',
     description:
       'Expertos dedicados a ayudarte a encontrar la mejor solución para tus necesidades específicas.',
   },
   {
-    icon: '📱',
+    image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&q=80',
     title: 'Plataforma Digital',
     description:
       'Gestiona tus pólizas, reporta siniestros y accede a toda la información desde cualquier dispositivo.',
   },
   {
-    icon: '🕐',
+    image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&q=80',
     title: 'Atención 24/7',
     description:
       'Estamos disponibles cuando más nos necesitas, con soporte continuo para emergencias.',
@@ -94,7 +94,14 @@ const Benefits = () => {
               whileHover={{ y: -10, scale: 1.02 }}
               className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-shadow duration-300"
             >
-              <div className="text-5xl mb-4">{benefit.icon}</div>
+              <div className="w-full h-32 md:h-36 mb-4 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
+                <img
+                  src={benefit.image}
+                  alt=""
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
               <h3 className="text-xl text-conecta-blue mb-3">
                 {benefit.title === 'Atención 24/7' ? (
                   <>Atención <span className="font-number">24/7</span></>

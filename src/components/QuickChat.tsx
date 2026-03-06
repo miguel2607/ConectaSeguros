@@ -141,7 +141,7 @@ const QuickChat = () => {
         <span className="w-7 h-7 rounded-full bg-conecta-orange flex items-center justify-center text-white text-sm">
           ?
         </span>
-        <span className="text-xs font-semibold text-conecta-blue">
+        <span className="text-sm md:text-base font-semibold text-conecta-blue">
           Chat rápido
         </span>
       </button>

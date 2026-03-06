@@ -52,13 +52,10 @@ public class SecurityConfig {
                 // Autenticación pública
                 .requestMatchers("/api/auth/**").permitAll()
                 // GET públicos (lectura para todos) - IMPORTANTE: deben ir antes de anyRequest()
-                .requestMatchers(HttpMethod.GET, "/api/pricing").permitAll()
-                .requestMatchers(HttpMethod.HEAD, "/api/pricing").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/blogs/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/services/**").permitAll()
                 
                 // Endpoints de escritura requieren autenticación
-                .requestMatchers(HttpMethod.PUT, "/api/pricing").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/blogs/**").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/blogs/**").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/api/blogs/**").authenticated()
